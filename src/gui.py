@@ -29,8 +29,9 @@ def draw_entities(screen, entities):
     draw_cell(screen, x, y, (0, 128, 255), "A", font)
 
 def draw_cell(screen, x, y, color, label, font):
-    rect = pygame.Rect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
+    flipped_y = GRID_SIZE - 1 - y  # Flip y-axis for correct orientation
+    rect = pygame.Rect(x * CELL_SIZE, flipped_y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
     pygame.draw.rect(screen, color, rect)
     pygame.draw.rect(screen, (0, 0, 0), rect, 1)  # border
     text = font.render(label, True, (255, 255, 255))
-    screen.blit(text, (x * CELL_SIZE + 20, y * CELL_SIZE + 20))
+    screen.blit(text, (x * CELL_SIZE + 20, flipped_y * CELL_SIZE + 20))

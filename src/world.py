@@ -4,7 +4,7 @@ class World:
         self.pits = {(1, 3), (3, 2), (4, 6)}  # example pits
         self.wumpus = (2, 2)
         self.gold = (6, 6)
-        self.agent_pos = (0, 9)
+        self.agent_pos = (0, 0)
 
     def get_entities(self):
         return {
