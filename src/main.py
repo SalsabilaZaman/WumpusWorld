@@ -1,5 +1,6 @@
 import pygame
-from gui import draw_grid
+from gui import draw_grid,draw_entities
+from world import World
 
 def main():
     pygame.init()
@@ -8,11 +9,15 @@ def main():
     clock = pygame.time.Clock()
     running = True
 
+    world = World()
+
     while running:
         screen.fill((255, 255, 255))  # White background
         
         draw_grid(screen)
-
+        entities = world.get_entities()
+        draw_entities(screen, entities)
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
