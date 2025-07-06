@@ -1,6 +1,8 @@
 import pygame
 from gui import draw_grid,draw_entities,draw_percepts
 from world import World
+from agent import Agent
+
 
 def main():
     pygame.init()
@@ -10,6 +12,7 @@ def main():
     running = True
 
     world = World(map_file="src/maps/level1.txt")  # Load the map from a file
+    agent = Agent()
 
     while running:
         screen.fill((255, 255, 255))  # White background
