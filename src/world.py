@@ -1,10 +1,35 @@
 class World:
-    def __init__(self):
+    # def __init__(self):
+    #     self.grid_size = 10
+    #     self.pits = {(1, 3), (3, 2), (4, 6)}  # example pits
+    #     self.wumpus = (2, 2)
+    #     self.gold = (6, 6)
+    #     self.agent_pos = (0, 0)
+    def __init__(self, map_file=None):
         self.grid_size = 10
-        self.pits = {(1, 3), (3, 2), (4, 6)}  # example pits
-        self.wumpus = (2, 2)
-        self.gold = (6, 6)
-        self.agent_pos = (0, 0)
+        self.pits = set()
+        self.wumpus = None
+        self.gold = None
+        self.agent_pos = (0, 0) 
+        
+        if map_file:
+            self.load_map_from_file(map_file)
+
+    def load_map_from_file(self, filepath):
+        with open(filepath, 'r') as f:
+            lines = f.read().strip().split('\n')
+
+        lines = lines[:self.grid_size]  
+
+        for row_index, line in enumerate(lines):
+            y = self.grid_size - 1 - row_index  # flip Y to match bottom-left origin
+            for x, char in enumerate(line.strip()):
+                if char == 'P':
+                    self.pits.add((x, y))
+                elif char == 'W':
+                    self.wumpus = (x, y)
+                elif char == 'G':
+                    self.gold = (x, y)
 
     def get_entities(self):
         return {

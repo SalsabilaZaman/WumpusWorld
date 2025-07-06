@@ -35,3 +35,10 @@ def draw_cell(screen, x, y, color, label, font):
     pygame.draw.rect(screen, (0, 0, 0), rect, 1)  # border
     text = font.render(label, True, (255, 255, 255))
     screen.blit(text, (x * CELL_SIZE + 20, flipped_y * CELL_SIZE + 20))
+
+def draw_percepts(screen, percepts):
+    font = pygame.font.SysFont(None, 28)
+    base_y = 620  # space below grid
+    pygame.draw.rect(screen, (255, 255, 255), (0, 600, 600, 100))  # clear previous text
+    label = font.render("Percepts: " + ", ".join(percepts), True, (0, 0, 0))
+    screen.blit(label, (10, base_y))

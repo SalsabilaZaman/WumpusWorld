@@ -1,15 +1,15 @@
 import pygame
-from gui import draw_grid,draw_entities
+from gui import draw_grid,draw_entities,draw_percepts
 from world import World
 
 def main():
     pygame.init()
-    screen = pygame.display.set_mode((600, 600))
+    screen = pygame.display.set_mode((600, 700))
     pygame.display.set_caption("Wumpus World")
     clock = pygame.time.Clock()
     running = True
 
-    world = World()
+    world = World(map_file="src/maps/level1.txt")  # Load the map from a file
 
     while running:
         screen.fill((255, 255, 255))  # White background
@@ -17,6 +17,10 @@ def main():
         draw_grid(screen)
         entities = world.get_entities()
         draw_entities(screen, entities)
+
+        x, y = world.agent_pos
+        percepts = world.get_percepts(x, y)
+        draw_percepts(screen, percepts)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -30,7 +34,7 @@ def main():
                     world.move_agent(-1, 0)
                 elif event.key == pygame.K_RIGHT:
                     world.move_agent(1, 0)
-                    
+
         pygame.display.flip()
         clock.tick(30)
 
