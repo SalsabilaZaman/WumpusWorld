@@ -24,6 +24,7 @@ The Wumpus World is a grid-based environment inspired by Section 7.2 of Russell 
 ---
 
 ## Project Structure
+```bash
 /WumpusWorld/
 ├── environments/ # Pre-defined map files
 ├── src/
