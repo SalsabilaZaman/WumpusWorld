@@ -17,11 +17,20 @@ def main():
         draw_grid(screen)
         entities = world.get_entities()
         draw_entities(screen, entities)
-        
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP:
+                    world.move_agent(0, 1)
+                elif event.key == pygame.K_DOWN:
+                    world.move_agent(0, -1)
+                elif event.key == pygame.K_LEFT:
+                    world.move_agent(-1, 0)
+                elif event.key == pygame.K_RIGHT:
+                    world.move_agent(1, 0)
+                    
         pygame.display.flip()
         clock.tick(30)
 
