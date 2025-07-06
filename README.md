@@ -49,4 +49,4 @@ The Wumpus World is a grid-based environment inspired by Section 7.2 of Russell 
 
 3. **Run the Program**
     python src/main.py
-
+    ```
