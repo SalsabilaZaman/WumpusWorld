@@ -34,7 +34,7 @@ The Wumpus World is a grid-based environment inspired by Section 7.2 of Russell 
 │ └── main.py # Entry point of the application
 ├── requirements.txt # Dependencies (if any)
 └── README.md # Project documentation
-
+```
 
 ---
 
