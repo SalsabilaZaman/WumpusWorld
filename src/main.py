@@ -27,12 +27,12 @@ def main():
         agent.perceive(percepts)
         draw_percepts(screen, percepts)
 
-
+        agent.step(world) 
         
-        next_pos = agent.next_move()
-        if next_pos:
-            agent.move_to(next_pos)
-            world.agent_pos = agent.position
+        # next_pos = agent.next_move()          #just for reference for single step
+        # if next_pos:
+        #     agent.move_to(next_pos)
+        #     world.agent_pos = agent.position
 
         # for event in pygame.event.get():
         #     if event.type == pygame.QUIT:
@@ -46,7 +46,7 @@ def main():
         #             world.move_agent(-1, 0)
         #         elif event.key == pygame.K_RIGHT:
         #             world.move_agent(1, 0)
-        # pygame.time.delay(500)
+        pygame.time.delay(1500)
         pygame.display.flip()
         clock.tick(30)
 

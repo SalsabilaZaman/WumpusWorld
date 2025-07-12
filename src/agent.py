@@ -26,9 +26,24 @@ class Agent:
 
     def next_move(self):
         for cell in self.frontier:
-            if cell in self.safe:
+            if cell not in self.visited and cell in self.safe:
+                print(f"Returned Cell: {cell}")
                 return cell
         return None  # No safe move known
 
     def move_to(self, cell):
         self.position = cell
+    def step(self, world):
+        x, y = self.position
+        percepts = world.get_percepts(x, y)
+        self.perceive(percepts)
+        print(f"Agent is at: {self.position}")
+        print(f"Percepts: {percepts}")
+        print(f"Safe: {self.safe}")
+        print(f"Frontier: {self.frontier}")
+        print(f"Visited: {self.visited}")
+
+        next_pos = self.next_move()
+        if next_pos:
+            self.move_to(next_pos)
+            world.agent_pos = self.position
