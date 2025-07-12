@@ -44,9 +44,12 @@ The Wumpus World is a grid-based environment inspired by Section 7.2 of Russell 
    ```bash
    git clone https://github.com/your-username/wumpus-agent.git
    cd wumpus-agent
+   ```
 2. **Install Dependencies**
+    ```bash
     pip install -r requirements.txt
-
+    ```
 3. **Run the Program**
+    ```bash
     python src/main.py
     ```
