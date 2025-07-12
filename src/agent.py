@@ -20,13 +20,11 @@ class Agent:
                     self.frontier.add((nx, ny))
 
         if "Breeze" not in percepts and "Stench" not in percepts:
-            # All adjacent squares are safe
             for nx, ny in neighbors:
                 if 0 <= nx < self.grid_size and 0 <= ny < self.grid_size:
                     self.safe.add((nx, ny))
 
     def next_move(self):
-        # Choose next safe, unvisited cell
         for cell in self.frontier:
             if cell in self.safe:
                 return cell
