@@ -21,23 +21,32 @@ def main():
         entities = world.get_entities()
         draw_entities(screen, entities)
 
-        x, y = world.agent_pos
+        # x, y = world.agent_pos
+        x, y = agent.position
         percepts = world.get_percepts(x, y)
+        agent.perceive(percepts)
         draw_percepts(screen, percepts)
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP:
-                    world.move_agent(0, 1)
-                elif event.key == pygame.K_DOWN:
-                    world.move_agent(0, -1)
-                elif event.key == pygame.K_LEFT:
-                    world.move_agent(-1, 0)
-                elif event.key == pygame.K_RIGHT:
-                    world.move_agent(1, 0)
 
+        
+        next_pos = agent.next_move()
+        if next_pos:
+            agent.move_to(next_pos)
+            world.agent_pos = agent.position
+
+        # for event in pygame.event.get():
+        #     if event.type == pygame.QUIT:
+        #         running = False
+        #     elif event.type == pygame.KEYDOWN:
+        #         if event.key == pygame.K_UP:
+        #             world.move_agent(0, 1)
+        #         elif event.key == pygame.K_DOWN:
+        #             world.move_agent(0, -1)
+        #         elif event.key == pygame.K_LEFT:
+        #             world.move_agent(-1, 0)
+        #         elif event.key == pygame.K_RIGHT:
+        #             world.move_agent(1, 0)
+        # pygame.time.delay(500)
         pygame.display.flip()
         clock.tick(30)
 
