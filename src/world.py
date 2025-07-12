@@ -11,7 +11,7 @@ class World:
         self.wumpus = None
         self.gold = None
         self.agent_pos = (0, 0) 
-        
+        self.grid= [[' ' for _ in range(self.grid_size)] for _ in range(self.grid_size)]
         if map_file:
             self.load_map_from_file(map_file)
 
@@ -56,3 +56,21 @@ class World:
         if (x, y) == self.gold:
             percepts.append("Glitter")
         return percepts
+
+    # def get_percepts(self, x, y):
+    #     percepts = set()
+    #     directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]  # Left, Right, Up, Down
+
+    #     for dx, dy in directions:
+    #         nx, ny = x + dx, y + dy
+    #         if 0 <= nx < self.grid_size and 0 <= ny < self.grid_size:
+    #             symbol = self.grid[ny][nx]
+    #             if symbol == 'P':
+    #                 percepts.add("Breeze")
+    #             elif symbol == 'W':
+    #                 percepts.add("Stench")
+
+    #     if self.grid[y][x] == 'G':
+    #         percepts.add("Glitter")
+
+    #     return list(percepts)
