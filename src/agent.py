@@ -1,4 +1,5 @@
 import sys
+from inference import KnowledgeBase
 
 
 class Agent:
@@ -7,23 +8,26 @@ class Agent:
         self.visited = set()
         self.safe = set([(0, 0)])   
         self.frontier = set()
-        self.kb = {}
+        self.kb = KnowledgeBase(grid_size)
         self.grid_size = grid_size
         self.path_history = [(0, 0)]  # Complete trail, never popped
         self.backtrack_stack = [(0, 0)]     # Stack of places to backtrack
 
     def perceive(self, percepts):
-        self.kb[self.position] = set(percepts)
         self.visited.add(self.position)
+        self.kb.update(self.position, percepts,self.visited)
+        self.safe=self.kb.safe
+        self.frontier = self.kb.frontier
+                
 
-        x, y = self.position
-        neighbors = self.get_neighbors((x, y))
+        # x, y = self.position
+        # neighbors = self.get_neighbors((x, y))
 
-        if "Breeze" not in percepts and "Stench" not in percepts:   #might be overlapping with previous logic
-            for nx, ny in neighbors:
-                self.safe.add((nx, ny))
-                if (nx, ny) not in self.visited:
-                    self.frontier.add((nx, ny))
+        # if "Breeze" not in percepts and "Stench" not in percepts:   #might be overlapping with previous logic
+        #     for nx, ny in neighbors:
+        #         self.safe.add((nx, ny))
+        #         if (nx, ny) not in self.visited:
+        #             self.frontier.add((nx, ny))
                     
 
     def get_neighbors(self, pos):
