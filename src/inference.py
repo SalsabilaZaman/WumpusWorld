@@ -3,8 +3,10 @@ class KnowledgeBase:
         self.facts = set()
         self.safe = set()
         self.unsafe = set()
+        self.risky = set()
         self.pits = set()
         self.wumpus = set()
+        self.frontier = set()
         self.grid_size = grid_size
         self.percepts_map = {}  # (x, y): set(percepts)
 
@@ -13,45 +15,63 @@ class KnowledgeBase:
         for p in percepts:
             self.facts.add((pos, p))
 
+        # If no danger, mark neighbors as safe and add to frontier
+        if "Breeze" not in percepts and "Stench" not in percepts:
+            for neighbor in self.get_neighbors(pos):
+                self.safe.add(neighbor)
+                self.frontier.add(neighbor)
+        else:
+            # Otherwise, neighbors are risky until further inference
+            for neighbor in self.get_neighbors(pos):
+                if neighbor not in self.safe and neighbor not in self.unsafe:
+                    self.risky.add(neighbor)
+                    self.frontier.add(neighbor)
+
     def get_neighbors(self, pos):
         x, y = pos
-        return [(x+dx, y+dy) for dx, dy in [(-1,0), (1,0), (0,-1), (0,1)]
-                if 0 <= x+dx < self.grid_size and 0 <= y+dy < self.grid_size]
+        return [(x + dx, y + dy) for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]
+                if 0 <= x + dx < self.grid_size and 0 <= y + dy < self.grid_size]
 
     def infer(self, visited):
-        # Rule 1: If a cell has no Breeze or Stench, all neighbors are safe
+        # Rule 1: No Breeze or Stench => neighbors are safe
         for pos, percepts in self.percepts_map.items():
-            neighbors = self.get_neighbors(pos)
             if "Breeze" not in percepts and "Stench" not in percepts:
-                for n in neighbors:
-                    self.safe.add(n)
+                for neighbor in self.get_neighbors(pos):
+                    self.safe.add(neighbor)
+                    self.risky.discard(neighbor)
 
-        # Rule 2: If a cell has Breeze, at least one neighbor has a pit
+        # Rule 2: Breeze => at least one neighbor has pit
         for pos, percepts in self.percepts_map.items():
-            neighbors = self.get_neighbors(pos)
             if "Breeze" in percepts:
-                possible_pits = [n for n in neighbors if n not in self.safe and n not in visited]
-                if len(possible_pits) == 1:
-                    self.pits.add(possible_pits[0])
-                    self.unsafe.add(possible_pits[0])
+                unknowns = [n for n in self.get_neighbors(pos) if n not in self.safe and n not in visited]
+                if len(unknowns) == 1:
+                    pit = unknowns[0]
+                    self.pits.add(pit)
+                    self.unsafe.add(pit)
+                    self.risky.discard(pit)
 
-        # Rule 3: If a cell has Stench, at least one neighbor has a Wumpus
+        # Rule 3: Stench => at least one neighbor has Wumpus
         for pos, percepts in self.percepts_map.items():
-            neighbors = self.get_neighbors(pos)
             if "Stench" in percepts:
-                possible_wumpus = [n for n in neighbors if n not in self.safe and n not in visited]
-                if len(possible_wumpus) == 1:
-                    self.wumpus.add(possible_wumpus[0])
-                    self.unsafe.add(possible_wumpus[0])
+                unknowns = [n for n in self.get_neighbors(pos) if n not in self.safe and n not in visited]
+                if len(unknowns) == 1:
+                    w = unknowns[0]
+                    self.wumpus.add(w)
+                    self.unsafe.add(w)
+                    self.risky.discard(w)
 
-        # Rule 4: If a neighbor is the only unexplored tile adjacent to a Breezy tile, it must be a pit
+        # Rule 4: Breezy tile with 1 unknown neighbor => pit
         for pos, percepts in self.percepts_map.items():
             if "Breeze" in percepts:
-                neighbors = self.get_neighbors(pos)
-                unexplored = [n for n in neighbors if n not in visited and n not in self.safe]
-                if len(unexplored) == 1:
-                    self.pits.add(unexplored[0])
-                    self.unsafe.add(unexplored[0])
+                unknowns = [n for n in self.get_neighbors(pos) if n not in self.safe and n not in visited]
+                if len(unknowns) == 1:
+                    pit = unknowns[0]
+                    self.pits.add(pit)
+                    self.unsafe.add(pit)
+                    self.risky.discard(pit)
+
+    def get_frontier(self):
+        return list(self.frontier)
 
     def query(self, proposition):
         return proposition in self.facts
@@ -61,3 +81,6 @@ class KnowledgeBase:
 
     def is_unsafe(self, pos):
         return pos in self.unsafe
+
+    def is_risky(self, pos):
+        return pos in self.risky
