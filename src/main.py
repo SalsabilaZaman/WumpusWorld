@@ -24,8 +24,9 @@ def main():
         # x, y = world.agent_pos
         x, y = agent.position
         percepts = world.get_percepts(x, y)
-        agent.perceive(percepts)
         draw_percepts(screen, percepts)
+        agent.perceive(percepts)
+        print(f"Percepts: {percepts}")
 
         agent.step(world) 
         
