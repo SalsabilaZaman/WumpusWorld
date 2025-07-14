@@ -8,6 +8,7 @@ class Agent:
         self.visited = set()
         self.safe = set([(0, 0)])   
         self.frontier = set()
+        self.risky = set()
         self.kb = KnowledgeBase(grid_size)
         self.grid_size = grid_size
         self.path_history = [(0, 0)]  # Complete trail, never popped
@@ -26,6 +27,7 @@ class Agent:
         self.kb.update(self.position, percepts,self.visited)
         self.safe=self.kb.safe
         self.frontier = self.kb.frontier
+        self.risky = self.kb.risky
 
 
         # x, y = self.position
@@ -58,7 +60,9 @@ class Agent:
             self.backtrack_stack.pop()
             back_pos = self.backtrack_stack.pop()
             return back_pos
-        else:
+        elif self.risky:
+            # If no safe moves, try risky cells:
+            
             return None
         
     def move_to(self, cell):

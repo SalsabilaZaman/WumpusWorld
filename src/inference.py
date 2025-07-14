@@ -73,15 +73,16 @@ class KnowledgeBase:
                 self.pits.add(pit)
                 self.unsafe.add(pit)
             else:
-                for diagonal in self.get_diagonal_neighbors(pos):
-                    if self.percepts_map.get(diagonal, set()) == {"Breeze"} or self.percepts_map.get(diagonal, set()) == {"Stench"}:
-                        interacting_cells= self.get_interacting_cells(pos, diagonal)
-                        count = len([cell for cell in interacting_cells if cell in self.safe])
-                        if count == 1:
-                            self.handle_interacting_cells(interacting_cells[0], interacting_cells[1])
-                        if count == 0:
-                            if unknowns:
-                                self.risky.add(unknowns in unknowns)
+                self.risky.add(unknowns in unknowns)
+                # for diagonal in self.get_diagonal_neighbors(pos):
+                #     if self.percepts_map.get(diagonal, set()) == {"Breeze"} or self.percepts_map.get(diagonal, set()) == {"Stench"}:
+                #         interacting_cells= self.get_interacting_cells(pos, diagonal)
+                #         count = len([cell for cell in interacting_cells if cell in self.safe])
+                #         if count == 1:
+                #             self.handle_interacting_cells(interacting_cells[0], interacting_cells[1])
+                #         if count == 0:
+                #             if unknowns:
+                #                 self.risky.add(unknowns in unknowns)
                             
                 # self.pits.add(diagonal)
                 # self.unsafe.add(diagonal) 
