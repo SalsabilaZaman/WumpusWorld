@@ -53,17 +53,32 @@ class Agent:
                 self.frontier.remove(frontier_cell)
                 return frontier_cell
             
+        if self.frontier:
+            # If stuck: backtrack to previous position
+            if len(self.backtrack_stack)>1:
+                print(f"Backtracking from {self.position} to {self.backtrack_stack[-2]}")
+                self.backtrack_stack.pop()
+                back_pos = self.backtrack_stack.pop()
+                return back_pos
+        
+        for risky_cell in self.risky:
+            for neighbor in self.get_neighbors(risky_cell):
+                if neighbor in self.path_history:
+                    # Extract subpath from current position to that neighbor
+                    try:
+                        current_index = self.path_history.index(self.position)
+                        target_index = self.path_history.index(neighbor)
+                        if current_index < target_index:
+                            subpath = self.path_history[current_index:target_index + 1]
+                        else:
+                            subpath = self.path_history[target_index:current_index + 1][::-1]
+                        if len(subpath) > 1:
+                            print(f"Navigating to {neighbor} to attempt risky cell {risky_cell}")
+                            return subpath[1]  # Next step toward neighbor
+                    except ValueError:
+                        continue  # In case something's off
+        return None
 
-        # If stuck: backtrack to previous position
-        if len(self.backtrack_stack)>1:
-            print(f"Backtracking from {self.position} to {self.backtrack_stack[-2]}")
-            self.backtrack_stack.pop()
-            back_pos = self.backtrack_stack.pop()
-            return back_pos
-        elif self.risky:
-            # If no safe moves, try risky cells:
-            
-            return None
         
     def move_to(self, cell):
         self.position = cell

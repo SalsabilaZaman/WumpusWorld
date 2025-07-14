@@ -67,13 +67,14 @@ class KnowledgeBase:
 
     def infer(self, pos,visited):
         if "Breeze" in self.percepts_map[pos] or "Stench" in self.percepts_map[pos]:
-            unknowns = [n for n in self.get_neighbors(pos) if n not in self.safe and n not in visited]
+            unknowns = [n for n in self.get_neighbors(pos) if n not in self.safe and n not in self.unsafe]
             if len(unknowns) == 1:
                 pit = unknowns[0]
                 self.pits.add(pit)
                 self.unsafe.add(pit)
             else:
-                self.risky.add(unknowns in unknowns)
+                for unknown in unknowns:
+                    self.risky.add(unknown)
                 # for diagonal in self.get_diagonal_neighbors(pos):
                 #     if self.percepts_map.get(diagonal, set()) == {"Breeze"} or self.percepts_map.get(diagonal, set()) == {"Stench"}:
                 #         interacting_cells= self.get_interacting_cells(pos, diagonal)
