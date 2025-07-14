@@ -12,6 +12,7 @@ class KnowledgeBase:
 
     def update(self, pos, percepts, visited=None):
         self.percepts_map[pos] = set(percepts)
+        
         # for p in percepts:
         #     self.facts.add((pos, p))
 
@@ -23,11 +24,14 @@ class KnowledgeBase:
                      self.frontier.add(neighbor)
         else:
             self.infer(pos,visited)
+            print(f"Unsafe: {self.unsafe}")
+            print(f"Pits: {self.pits}")
+            print(f"Percepts at {pos}: {self.percepts_map[pos]}")
+            print(f"Risky: {self.risky}")
             # Otherwise, neighbors are risky until further inference
-            for neighbor in self.get_neighbors(pos):
-                if neighbor not in self.safe and neighbor not in self.unsafe:
-                    self.risky.add(neighbor)
-                    self.frontier.add(neighbor)
+            # for neighbor in self.get_neighbors(pos):
+            #     if neighbor not in self.safe and neighbor not in self.unsafe:
+            #         self.risky.add(neighbor)
 
     def get_neighbors(self, pos):
         x, y = pos
@@ -70,13 +74,14 @@ class KnowledgeBase:
                 self.unsafe.add(pit)
             else:
                 for diagonal in self.get_diagonal_neighbors(pos):
-                    if map.get(diagonal, set()) == {"Breeze"} or map.get(diagonal, set()) == {"Stench"}:
+                    if self.percepts_map.get(diagonal, set()) == {"Breeze"} or self.percepts_map.get(diagonal, set()) == {"Stench"}:
                         interacting_cells= self.get_interacting_cells(pos, diagonal)
                         count = len([cell for cell in interacting_cells if cell in self.safe])
                         if count == 1:
                             self.handle_interacting_cells(interacting_cells[0], interacting_cells[1])
                         if count == 0:
-                            self.risky.add(unknowns)
+                            if unknowns:
+                                self.risky.add(unknowns in unknowns)
                             
                 # self.pits.add(diagonal)
                 # self.unsafe.add(diagonal) 

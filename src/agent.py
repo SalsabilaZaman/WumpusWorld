@@ -14,11 +14,19 @@ class Agent:
         self.backtrack_stack = [(0, 0)]     # Stack of places to backtrack
 
     def perceive(self, percepts):
+        print(f"\nAgent is at: {self.position}")
+        print(f"Safe: {self.safe}")
+        print(f"Visited: {self.visited}")
+        print(f"Frontier: {self.frontier}")
+        print(f"Neighbors: {self.get_neighbors(self.position)}")
+        print(f"Path History: {self.path_history}")
+        print(f"Backtrack Stack: {self.backtrack_stack}")
+
         self.visited.add(self.position)
         self.kb.update(self.position, percepts,self.visited)
         self.safe=self.kb.safe
         self.frontier = self.kb.frontier
-                
+
 
         # x, y = self.position
         # neighbors = self.get_neighbors((x, y))
@@ -39,12 +47,14 @@ class Agent:
         # Try safe, unvisited neighbors(frontier) first
         for frontier_cell in self.frontier:
             if frontier_cell in self.get_neighbors(self.position):
+                print(f"Moving to safe frontier cell: {frontier_cell}")
                 self.frontier.remove(frontier_cell)
                 return frontier_cell
             
 
         # If stuck: backtrack to previous position
         if len(self.backtrack_stack)>1:
+            print(f"Backtracking from {self.position} to {self.backtrack_stack[-2]}")
             self.backtrack_stack.pop()
             back_pos = self.backtrack_stack.pop()
             return back_pos
@@ -61,12 +71,7 @@ class Agent:
         # percepts = world.get_percepts(x, y)
         # self.perceive(percepts)
 
-        print(f"\nAgent is at: {self.position}")
-        print(f"Safe: {self.safe}")
-        print(f"Visited: {self.visited}")
-        print(f"Frontier: {self.frontier}")
-        print(f"Path History: {self.path_history}")
-        print(f"Backtrack Stack: {self.backtrack_stack}")
+        
 
         next_pos = self.next_move()
         if next_pos:
