@@ -73,7 +73,9 @@ class KnowledgeBase:
         
 
     def infer(self, pos,visited):
+        print(f"Inferring at {pos} with percepts {self.percepts_map[pos]}")
         if "Breeze" in self.percepts_map[pos] :
+            print(f"Breeze at {pos}")
             unknowns = [n for n in self.get_neighbors(pos) if n not in self.safe and n not in self.unsafe]
             if len(unknowns) == 1:
                 pit = unknowns[0]
@@ -94,6 +96,7 @@ class KnowledgeBase:
                                     self.risky.append(unknown)
 
         if "Stench" in self.percepts_map[pos]:
+            print(f"Stench at {pos}")
             unknowns = [n for n in self.get_neighbors(pos) if n not in self.safe and n not in self.unsafe]
             if len(unknowns) == 1:
                 wumpus = unknowns[0]
@@ -108,11 +111,11 @@ class KnowledgeBase:
                         count = len([cell for cell in interacting_cells if cell in self.safe])
                         if count == 1:
                             self.handle_interacting_cells(interacting_cells[0], interacting_cells[1])
-                        if count == 0:
-                            for unknown in unknowns:
-                                if unknown not in self.risky and unknown not in self.unsafe:
-                                    self.risky.append(unknown)
-        
+            
+                    for unknown in unknowns:
+                        if unknown not in self.risky and unknown not in self.unsafe:
+                            self.risky.append(unknown)
+
 
 
                 # self.pits.add(diagonal)

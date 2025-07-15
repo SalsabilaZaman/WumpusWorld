@@ -51,7 +51,7 @@ class World:
         for ax, ay in adj:
             if (ax, ay) in self.pits:
                 percepts.append("Breeze")
-            if (ax, ay) == self.wumpus:
+            if (ax, ay) in self.wumpus:
                 percepts.append("Stench")
         if (x, y) == self.gold:
             percepts.append("Glitter")
