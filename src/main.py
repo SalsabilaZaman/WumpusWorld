@@ -27,7 +27,9 @@ def main():
         draw_percepts(screen, percepts)
         agent.perceive(percepts)
         # print(f"Percepts: {percepts}")
-
+        if agent.found_gold:
+            print(f"\n🎉 GOLD FOUND at {agent.position}! GAME OVER.")
+            break
         agent.step(world) 
         
         # next_pos = agent.next_move()          #just for reference for single step

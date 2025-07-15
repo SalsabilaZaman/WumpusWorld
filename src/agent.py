@@ -14,6 +14,7 @@ class Agent:
         self.path_history = [(0, 0)]  # Complete trail, never popped
         self.backtrack_stack = [(0, 0)]     # Stack of places to backtrack
         self.planned_path = []  # Stores the full safe path to a risky neighbor
+        self.found_gold = False
 
 
     def perceive(self, percepts):
@@ -30,6 +31,7 @@ class Agent:
         self.safe=self.kb.safe
         self.frontier = self.kb.frontier
         self.risky = self.kb.risky
+        self.found_gold = self.kb.found_gold
 
 
         # x, y = self.position
