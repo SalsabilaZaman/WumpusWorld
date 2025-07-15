@@ -8,7 +8,7 @@ class World:
     def __init__(self, map_file=None):
         self.grid_size = 10
         self.pits = set()
-        self.wumpus = None
+        self.wumpus = set()
         self.gold = None
         self.agent_pos = (0, 0) 
         self.grid= [[' ' for _ in range(self.grid_size)] for _ in range(self.grid_size)]
@@ -27,7 +27,7 @@ class World:
                 if char == 'P':
                     self.pits.add((x, y))
                 elif char == 'W':
-                    self.wumpus = (x, y)
+                    self.wumpus.add((x,y))
                 elif char == 'G':
                     self.gold = (x, y)
 

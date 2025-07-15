@@ -17,8 +17,8 @@ def draw_entities(screen, entities):
         draw_cell(screen, x, y, (50, 50, 50), "P", font)
 
     # Draw Wumpus
-    x, y = entities["wumpus"]
-    draw_cell(screen, x, y, (139, 0, 0), "W", font)
+    for (x, y) in entities["wumpus"]:
+        draw_cell(screen, x, y, (139, 0, 0), "W", font)
 
     # Draw gold
     x, y = entities["gold"]
