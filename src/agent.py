@@ -8,11 +8,13 @@ class Agent:
         self.visited = set()
         self.safe = set([(0, 0)])   
         self.frontier = set()
-        self.risky = set()
+        self.risky = list()  # Changed to list for ordered processing
         self.kb = KnowledgeBase(grid_size)
         self.grid_size = grid_size
         self.path_history = [(0, 0)]  # Complete trail, never popped
         self.backtrack_stack = [(0, 0)]     # Stack of places to backtrack
+        self.planned_path = []  # Stores the full safe path to a risky neighbor
+
 
     def perceive(self, percepts):
         print(f"\nAgent is at: {self.position}")
@@ -60,23 +62,24 @@ class Agent:
                 self.backtrack_stack.pop()
                 back_pos = self.backtrack_stack.pop()
                 return back_pos
-        
+        if len(self.planned_path)>0:
+            return self.planned_path.pop(0)  # Return next planned step if available
         for risky_cell in self.risky:
             for neighbor in self.get_neighbors(risky_cell):
                 if neighbor in self.path_history:
-                    # Extract subpath from current position to that neighbor
                     try:
                         current_index = self.path_history.index(self.position)
                         target_index = self.path_history.index(neighbor)
                         if current_index < target_index:
-                            subpath = self.path_history[current_index:target_index + 1]
+                            self.planned_path = self.path_history[current_index + 1:target_index + 1]
                         else:
-                            subpath = self.path_history[target_index:current_index + 1][::-1]
-                        if len(subpath) > 1:
-                            print(f"Navigating to {neighbor} to attempt risky cell {risky_cell}")
-                            return subpath[1]  # Next step toward neighbor
+                            self.planned_path = self.path_history[target_index:current_index][::-1]
+                        self.planned_path.append(risky_cell)
+                        print(f"Planning path to risky cell via neighbor {neighbor}")
+                        print(f"Planned path: {self.planned_path}")
+                        return self.planned_path.pop(0) 
                     except ValueError:
-                        continue  # In case something's off
+                        continue        
         return None
 
         
@@ -90,9 +93,7 @@ class Agent:
         # percepts = world.get_percepts(x, y)
         # self.perceive(percepts)
 
-        
-
-        next_pos = self.next_move()
+        next_pos = self.next_move()         
         if next_pos:
             self.move_to(next_pos)
             world.agent_pos = self.position

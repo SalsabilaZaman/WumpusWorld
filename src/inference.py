@@ -3,7 +3,7 @@ class KnowledgeBase:
         # self.facts = set()
         self.safe = set()
         self.unsafe = set()
-        self.risky = set()
+        self.risky = list()  # Changed to list for ordered processing
         self.pits = set()
         self.wumpus = set()
         self.frontier = set()
@@ -58,12 +58,16 @@ class KnowledgeBase:
         is_cell2_safe = cell2 in self.safe
 
         if is_cell1_safe and not is_cell2_safe:
-            self.pits.add(cell2)
-            self.unsafe.add(cell2)
-        else:
-            self.pits.add(cell1)
-            self.unsafe.add(cell1)
-
+            if cell2 not in self.risky and cell2 not in self.unsafe:
+                self.risky.append(cell2)  # Add to risky list
+            # self.pits.add(cell2)
+            # self.unsafe.add(cell2)
+        elif not is_cell1_safe and is_cell2_safe:
+            if cell1 not in self.risky and cell1 not in self.unsafe:
+                self.risky.append(cell1)  # Add to risky list
+            # self.pits.add(cell1)
+            # self.unsafe.add(cell1)
+        
 
     def infer(self, pos,visited):
         if "Breeze" in self.percepts_map[pos] or "Stench" in self.percepts_map[pos]:
@@ -73,17 +77,18 @@ class KnowledgeBase:
                 self.pits.add(pit)
                 self.unsafe.add(pit)
             else:
-                for unknown in unknowns:
-                    self.risky.add(unknown)
-                # for diagonal in self.get_diagonal_neighbors(pos):
-                #     if self.percepts_map.get(diagonal, set()) == {"Breeze"} or self.percepts_map.get(diagonal, set()) == {"Stench"}:
-                #         interacting_cells= self.get_interacting_cells(pos, diagonal)
-                #         count = len([cell for cell in interacting_cells if cell in self.safe])
-                #         if count == 1:
-                #             self.handle_interacting_cells(interacting_cells[0], interacting_cells[1])
-                #         if count == 0:
-                #             if unknowns:
-                #                 self.risky.add(unknowns in unknowns)
+                # for unknown in unknowns:
+                #     self.risky.add(unknown)
+                for diagonal in self.get_diagonal_neighbors(pos):
+                    if self.percepts_map.get(diagonal, set()) == {"Breeze"} or self.percepts_map.get(diagonal, set()) == {"Stench"}:
+                        interacting_cells= self.get_interacting_cells(pos, diagonal)
+                        count = len([cell for cell in interacting_cells if cell in self.safe])
+                        if count == 1:
+                            self.handle_interacting_cells(interacting_cells[0], interacting_cells[1])
+                        if count == 0:
+                            for unknown in unknowns:
+                                if unknown not in self.risky and unknown not in self.unsafe:
+                                    self.risky.append(unknown)
                             
                 # self.pits.add(diagonal)
                 # self.unsafe.add(diagonal) 
