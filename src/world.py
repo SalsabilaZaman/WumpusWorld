@@ -18,7 +18,7 @@ class World:
         if map_file:
             self.load_map_from_file(map_file)
         else:
-            self.generate_random_map(pit_prob=0.12, seed=42)
+            self.generate_random_map(pit_prob=0.05)  
 
     def load_map_from_file(self, filepath):
         with open(filepath, 'r') as f:
