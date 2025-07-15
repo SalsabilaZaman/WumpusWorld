@@ -11,7 +11,9 @@ def main():
     clock = pygame.time.Clock()
     running = True
 
-    world = World(map_file="src/maps/level1.txt")  # Load the map from a file
+    # world = World(map_file="src/maps/level1.txt")  # Load the map from a file
+    world = World()  # Generate a random map
+    
     agent = Agent()
 
     while running:

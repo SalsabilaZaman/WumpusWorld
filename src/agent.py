@@ -94,7 +94,9 @@ class Agent:
         x, y = self.position
         # percepts = world.get_percepts(x, y)
         # self.perceive(percepts)
-
+        if world.is_danger(self.position):
+            print(f"💀 Agent moved into danger at {self.position}! GAME OVER.")
+            sys.exit(0)
         next_pos = self.next_move()         
         if next_pos:
             self.move_to(next_pos)

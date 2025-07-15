@@ -1,3 +1,6 @@
+import random
+
+
 class World:
     # def __init__(self):
     #     self.grid_size = 10
@@ -14,6 +17,8 @@ class World:
         self.grid= [[' ' for _ in range(self.grid_size)] for _ in range(self.grid_size)]
         if map_file:
             self.load_map_from_file(map_file)
+        else:
+            self.generate_random_map(pit_prob=0.12, seed=42)
 
     def load_map_from_file(self, filepath):
         with open(filepath, 'r') as f:
@@ -56,21 +61,39 @@ class World:
         if (x, y) == self.gold:
             percepts.append("Glitter")
         return percepts
+    
+    def is_danger(self, pos):
+        return pos in self.pits or pos in self.wumpus
+    
 
-    # def get_percepts(self, x, y):
-    #     percepts = set()
-    #     directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]  # Left, Right, Up, Down
+    def generate_random_map(self, pit_prob=0.12, seed=None):
+        
+        if seed is not None:
+            random.seed(seed)  # for reproducibility
 
-    #     for dx, dy in directions:
-    #         nx, ny = x + dx, y + dy
-    #         if 0 <= nx < self.grid_size and 0 <= ny < self.grid_size:
-    #             symbol = self.grid[ny][nx]
-    #             if symbol == 'P':
-    #                 percepts.add("Breeze")
-    #             elif symbol == 'W':
-    #                 percepts.add("Stench")
+        self.pits = set()
+        self.wumpus = set()
+        self.gold = None
+        self.agent_pos = (0, 0)
+        self.grid = [[' ' for _ in range(self.grid_size)] for _ in range(self.grid_size)]
 
-    #     if self.grid[y][x] == 'G':
-    #         percepts.add("Glitter")
+        total_cells = self.grid_size * self.grid_size
+        available_cells = [(x, y) for x in range(self.grid_size) for y in range(self.grid_size)
+                           if (x, y) != self.agent_pos]
 
-    #     return list(percepts)
+        # Place pits randomly (based on probability)
+        num_pits = int(pit_prob * total_cells)
+        self.pits = set(random.sample(available_cells, num_pits))
+
+        # Remove pits from available cells for wumpus/gold
+        safe_cells = [cell for cell in available_cells if cell not in self.pits]
+
+        # Place wumpus
+        wumpus_pos = random.choice(safe_cells)
+        self.wumpus = {wumpus_pos}
+        safe_cells.remove(wumpus_pos)
+
+        # Place gold
+        self.gold = random.choice(safe_cells)
+
+        print(f"[Map Generated] Pits: {len(self.pits)}, Wumpus: {self.wumpus}, Gold: {self.gold}")
