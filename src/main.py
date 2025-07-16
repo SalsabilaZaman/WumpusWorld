@@ -1,13 +1,14 @@
 import pygame
-from gui import draw_grid,draw_entities,draw_percepts
+from gui import *
 from world import World
 from agent import Agent
 
+pygame.mixer.init()
+init_assets()  # Initialize GUI assets
 
 def main():
-    pygame.init()
-    screen = pygame.display.set_mode((600, 700))
-    pygame.display.set_caption("Wumpus World")
+    play_bgm()  # Start background music
+    screen = init_gui()  # Initialize GUI
     clock = pygame.time.Clock()
     running = True
 
@@ -21,18 +22,52 @@ def main():
         
         draw_grid(screen)
         entities = world.get_entities()
+        # Update entities with agent's knowledge
+        entities["percepts"] = agent.kb.percepts_map
         draw_entities(screen, entities)
 
-        # x, y = world.agent_pos
+        # # --- BEFORE MOVE ---
         x, y = agent.position
         percepts = world.get_percepts(x, y)
         draw_percepts(screen, percepts)
+        draw_agent_mind(screen, agent)
         agent.perceive(percepts)
-        # print(f"Percepts: {percepts}")
+        pygame.display.flip()
+
+        # --- MOVE AGENT ---
+        agent.step(world)
+
+        # --- AFTER MOVE ---
+        x, y = agent.position
+        percepts = world.get_percepts(x, y)
+        agent.perceive(percepts)
+        draw_percepts(screen, percepts)
+        draw_agent_mind(screen, agent)
+        play_percept_sounds(percepts)  # Play sound for new cell
+        pygame.display.flip()
+
+        pygame.time.delay(100)  # Short pause to show new percepts
+
         if agent.found_gold:
-            print(f"\n🎉 GOLD FOUND at {agent.position}! GAME OVER.")
+            # print(f"\nGOLD FOUND at {agent.position}! GAME OVER.")
+            show_game_over_popup(screen, agent.position)
             break
-        agent.step(world) 
+
+        clock.tick(30)
+
+        # x, y = world.agent_pos
+        # x, y = agent.position
+        # percepts = world.get_percepts(x, y)
+        # draw_percepts(screen, percepts)
+        # draw_agent_mind(screen, agent)
+        # # play sounds based on percepts
+        # play_percept_sounds(percepts)
+        # agent.perceive(percepts)
+        # # print(f"Percepts: {percepts}")
+        # if agent.found_gold:
+        #     print(f"\n🎉 GOLD FOUND at {agent.position}! GAME OVER.")
+        #     break
+        # agent.step(world) 
         
         # next_pos = agent.next_move()          #just for reference for single step
         # if next_pos:
@@ -51,9 +86,9 @@ def main():
         #             world.move_agent(-1, 0)
         #         elif event.key == pygame.K_RIGHT:
         #             world.move_agent(1, 0)
-        pygame.time.delay(1500)
-        pygame.display.flip()
-        clock.tick(30)
+        # pygame.time.delay(1500)
+        # pygame.display.flip()
+        # clock.tick(30)
 
     pygame.quit()
 
