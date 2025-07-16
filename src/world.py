@@ -35,6 +35,8 @@ class World:
                     self.wumpus.add((x,y))
                 elif char == 'G':
                     self.gold = (x, y)
+        for pit in self.pits:
+            print(f"Pit at {pit}")            
 
     def get_entities(self):
         return {

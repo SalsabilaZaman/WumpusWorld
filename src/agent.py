@@ -15,6 +15,8 @@ class Agent:
         self.backtrack_stack = [(0, 0)]     # Stack of places to backtrack
         self.planned_path = []  # Stores the full safe path to a risky neighbor
         self.found_gold = False
+        self.points = 0
+        self.arrow_used = False
 
 
     def perceive(self, percepts):
@@ -32,8 +34,8 @@ class Agent:
         self.frontier = self.kb.frontier
         self.risky = self.kb.risky
         self.found_gold = self.kb.found_gold
-
-
+        if self.found_gold:
+            self.add_points(+1000, reason="Agent escaped with gold")
         # x, y = self.position
         # neighbors = self.get_neighbors((x, y))
 
@@ -89,6 +91,7 @@ class Agent:
         self.position = cell
         self.path_history.append(cell)
         self.backtrack_stack.append(cell)
+        
 
     def step(self, world):
         x, y = self.position
@@ -96,11 +99,33 @@ class Agent:
         # self.perceive(percepts)
         if world.is_danger(self.position):
             print(f"💀 Agent moved into danger at {self.position}! GAME OVER.")
+            self.add_points(-1000, reason="Agent died")
             sys.exit(0)
+             
         next_pos = self.next_move()         
         if next_pos:
             self.move_to(next_pos)
+            self.add_points(-1, reason=f"Moved to {next_pos}")
             world.agent_pos = self.position
         else:
             print("No valid moves available. Agent is stuck.")
             sys.exit(0)  # Exit if no moves are possible
+   
+    def add_points(self, amount, reason=""):
+        self.points += amount
+        print(f"[Points] {reason}: {amount:+} → Total: {self.points}")
+
+
+    def use_arrow(self):
+        if not self.arrow_used:
+            self.arrow_used = True
+            self.add_points(-10, reason="Used Arrow")
+        else:
+            print("Arrow already used.")
+
+    def collect_gold(self):
+        self.found_gold = True
+        print("Gold collected!")
+
+    def get_score(self):
+        return self.points
