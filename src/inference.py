@@ -72,51 +72,98 @@ class KnowledgeBase:
             # self.unsafe.add(cell1)
         
 
-    def infer(self, pos,visited):
+    def infer(self, pos, visited):
         print(f"Inferring at {pos} with percepts {self.percepts_map[pos]}")
-        if "Breeze" in self.percepts_map[pos] :
+        
+        if "Breeze" in self.percepts_map[pos]:
             print(f"Breeze at {pos}")
-            unknowns = [n for n in self.get_neighbors(pos) if n not in self.safe and n not in self.unsafe]
-            if len(unknowns) == 1:
+            neighbors = self.get_neighbors(pos)
+            unknowns = [n for n in neighbors if n not in self.safe and n not in self.unsafe]
+            known_pits = [n for n in neighbors if n in self.pits]
+
+            if not known_pits and len(unknowns) == 1:
                 pit = unknowns[0]
+                print(f"[RESOLVED] Breeze at {pos} → Pit must be at {pit}")
                 self.pits.add(pit)
                 self.unsafe.add(pit)
+                if pit in self.risky:
+                    self.risky.remove(pit)
             else:
-                # for unknown in unknowns:
-                #     self.risky.add(unknown)
                 for diagonal in self.get_diagonal_neighbors(pos):
-                    if self.percepts_map.get(diagonal, set()) == {"Breeze"} :
-                        interacting_cells= self.get_interacting_cells(pos, diagonal)
+                    if self.percepts_map.get(diagonal, set()) == {"Breeze"}:
+                        interacting_cells = self.get_interacting_cells(pos, diagonal)
                         count = len([cell for cell in interacting_cells if cell in self.safe])
                         if count == 1:
                             self.handle_interacting_cells(interacting_cells[0], interacting_cells[1])
-                
-                    for unknown in unknowns:
-                        if unknown not in self.risky and unknown not in self.unsafe:
-                            self.risky.append(unknown)
+
+                for unknown in unknowns:
+                    if unknown not in self.risky and unknown not in self.unsafe:
+                        self.risky.append(unknown)
 
         if "Stench" in self.percepts_map[pos]:
             print(f"Stench at {pos}")
-            unknowns = [n for n in self.get_neighbors(pos) if n not in self.safe and n not in self.unsafe]
-            if len(unknowns) == 1:
+            neighbors = self.get_neighbors(pos)
+            unknowns = [n for n in neighbors if n not in self.safe and n not in self.unsafe]
+            known_wumpus = [n for n in neighbors if n in self.wumpus]
+
+            if not known_wumpus and len(unknowns) == 1:
                 wumpus = unknowns[0]
-                print(f"Wumpus detected at {wumpus}.KILLED WUMPUS MUHAHAHAHA")
+                print(f"[RESOLVED] Stench at {pos} → Wumpus must be at {wumpus}")
                 self.wumpus.add(wumpus)
                 self.unsafe.add(wumpus)
+                if wumpus in self.risky:
+                    self.risky.remove(wumpus)
             else:
-                # for unknown in unknowns:
-                #     self.risky.add(unknown)
                 for diagonal in self.get_diagonal_neighbors(pos):
                     if self.percepts_map.get(diagonal, set()) == {"Stench"}:
-                        interacting_cells= self.get_interacting_cells(pos, diagonal)
+                        interacting_cells = self.get_interacting_cells(pos, diagonal)
                         count = len([cell for cell in interacting_cells if cell in self.safe])
                         if count == 1:
                             self.handle_interacting_cells(interacting_cells[0], interacting_cells[1])
-            
-                    for unknown in unknowns:
-                        if unknown not in self.risky and unknown not in self.unsafe:
-                            self.risky.append(unknown)
 
+                for unknown in unknowns:
+                    if unknown not in self.risky and unknown not in self.unsafe:
+                        self.risky.append(unknown)
+
+        self.resolve_risks()
+
+    def resolve_risks(self):
+        for pos, percepts in self.percepts_map.items():
+            neighbors = self.get_neighbors(pos)
+
+            # All known cells
+            safe_or_unsafe = [n for n in neighbors if n in self.safe or n in self.unsafe]
+            unknowns = [n for n in neighbors if n not in self.safe and n not in self.unsafe]
+
+            # Check for Pits
+            if "Breeze" in percepts:
+                known_pits = [n for n in neighbors if n in self.pits]
+                if known_pits:
+                    continue
+
+                if len(unknowns) == 1 and len(safe_or_unsafe) == len(neighbors) - 1:
+                    pit = unknowns[0]
+                    if pit not in self.unsafe:
+                        print(f"[RESOLVED] Breeze at {pos} → Pit must be at {pit}")
+                        self.pits.add(pit)
+                        self.unsafe.add(pit)
+                        if pit in self.risky:
+                            self.risky.remove(pit)
+
+            # Check for Wumpus
+            if "Stench" in percepts:
+                known_wumpus = [n for n in neighbors if n in self.wumpus]
+                if known_wumpus:
+                    continue
+
+                if len(unknowns) == 1 and len(safe_or_unsafe) == len(neighbors) - 1:
+                    wumpus = unknowns[0]
+                    if wumpus not in self.unsafe:
+                        print(f"[RESOLVED] Stench at {pos} → Wumpus must be at {wumpus}")
+                        self.wumpus.add(wumpus)
+                        self.unsafe.add(wumpus)
+                        if wumpus in self.risky:
+                            self.risky.remove(wumpus)
 
 
                 # self.pits.add(diagonal)

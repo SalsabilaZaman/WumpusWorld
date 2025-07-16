@@ -96,4 +96,7 @@ class World:
         # Place gold
         self.gold = random.choice(safe_cells)
 
-        print(f"[Map Generated] Pits: {len(self.pits)}, Wumpus: {self.wumpus}, Gold: {self.gold}")
+        print(f"[Map Generated] Pits: {len(self.pits)} , Wumpus: {self.wumpus}, Gold: {self.gold}")
+        for pit in self.pits:
+            print(f"Pit at {pit}")
+        print(f"Wumpus at {self.wumpus}")
