@@ -18,9 +18,9 @@ def main():
     agent = Agent()
 
     while running:
-        screen.fill((255, 255, 235))  # White background
+        screen.fill(COLORS['background'])  # Enhanced dark background
         
-        draw_grid(screen)
+        draw_grid(screen, agent)  # Pass agent for enhanced cell coloring
         entities = world.get_entities()
         # Update entities with agent's knowledge
         entities["percepts"] = agent.kb.percepts_map
