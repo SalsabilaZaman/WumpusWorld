@@ -18,7 +18,7 @@ def main():
     agent = Agent()
 
     while running:
-        screen.fill((255, 255, 255))  # White background
+        screen.fill((255, 255, 235))  # White background
         
         draw_grid(screen)
         entities = world.get_entities()
