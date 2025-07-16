@@ -14,9 +14,6 @@ class KnowledgeBase:
     def update(self, pos, percepts, visited=None):
         self.percepts_map[pos] = set(percepts)
         
-        # for p in percepts:
-        #     self.facts.add((pos, p))
-
         # If no danger, mark neighbors as safe and add to frontier
         if "Breeze" not in percepts and "Stench" not in percepts:
             for neighbor in self.get_neighbors(pos):
@@ -31,10 +28,6 @@ class KnowledgeBase:
             print(f"Pits: {self.pits}")
             print(f"Risky: {self.risky}")
             print(f"Wumpus: {self.wumpus}")
-            # Otherwise, neighbors are risky until further inference
-            # for neighbor in self.get_neighbors(pos):
-            #     if neighbor not in self.safe and neighbor not in self.unsafe:
-            #         self.risky.add(neighbor)
 
     def get_neighbors(self, pos):
         x, y = pos

@@ -36,14 +36,7 @@ class Agent:
         self.found_gold = self.kb.found_gold
         if self.found_gold:
             self.add_points(+1000, reason="Agent escaped with gold")
-        # x, y = self.position
-        # neighbors = self.get_neighbors((x, y))
-
-        # if "Breeze" not in percepts and "Stench" not in percepts:   #might be overlapping with previous logic
-        #     for nx, ny in neighbors:
-        #         self.safe.add((nx, ny))
-        #         if (nx, ny) not in self.visited:
-        #             self.frontier.add((nx, ny))
+        
                     
 
     def get_neighbors(self, pos):
