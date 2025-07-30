@@ -12,15 +12,17 @@ def main():
     clock = pygame.time.Clock()
     running = True
 
-    world = World(map_file="src/maps/level1.txt")  # Load the map from a file
-    # world = World()  # Generate a random map
+    # world = World(map_file="src/maps/level1.txt")  # Load the map from a file
+    # world = World(map_file="src/maps/level2.txt")  # Load the map from a file
+    
+    world = World()  # Generate a random map
     
     agent = Agent()
 
     while running:
-        screen.fill((255, 255, 235))  # White background
+        screen.fill(COLORS['background'])  # Enhanced dark background
         
-        draw_grid(screen)
+        draw_grid(screen, agent)  # Pass agent for enhanced cell coloring
         entities = world.get_entities()
         # Update entities with agent's knowledge
         entities["percepts"] = agent.kb.percepts_map
@@ -46,7 +48,7 @@ def main():
         play_percept_sounds(percepts)  # Play sound for new cell
         pygame.display.flip()
 
-        pygame.time.delay(100)  # Short pause to show new percepts
+        pygame.time.delay(300)  # Short pause to show new percepts
 
         if agent.found_gold:
             print(f"\nGOLD FOUND at {agent.position}! GAME OVER.")
