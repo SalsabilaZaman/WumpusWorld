@@ -301,14 +301,15 @@ def draw_agent_mind(screen, agent):
     if hasattr(agent, "last_action") and agent.last_action:
         strategy = agent.last_action
     else:
-        if agent.safe:
-            strategy = "🎯 Advancing to safe frontier cells"
+        frontier_list = list(agent.frontier)
+        if len(frontier_list) > 1 and frontier_list[0] in agent.get_neighbors(agent.position):
+           strategy = "Advancing to safe frontier cells"
+        elif len(agent.backtrack_stack) > 1 and len(agent.frontier) > 1:
+            strategy = f"Backtracking to safer position"
         elif agent.risky:
-            strategy = "⚠️ Calculating risk for frontier exploration"
-        elif len(agent.backtrack_stack) > 1:
-            strategy = f"🔄 Backtracking to safer position"
+            strategy = f"Calculating risk for frontier exploration"
         else:
-            strategy = "🚫 No valid moves - reassessing situation"
+            strategy = f"No valid moves - reassessing situation"
     
     strategy_lines = []
     words = strategy.split()
@@ -366,8 +367,8 @@ def play_percept_sounds(percepts):
         glitter_sound.stop()
         glitter_sound.play()
 
-def show_game_over_popup(screen, position):
-    """Enhanced game over popup with modern styling"""
+def show_game_over_popup(screen, position, died=False):
+    """Enhanced game over popup with modern styling. If died=True, show death message."""
     # Stop all sounds
     pygame.mixer.music.stop()
     if breeze_sound: breeze_sound.stop()
@@ -395,27 +396,31 @@ def show_game_over_popup(screen, position):
     button_font = pygame.font.SysFont("Orbitron", 24, bold=True)
 
     # Title with golden glow
-    title_msg = "MISSION ACCOMPLISHED!"
-    subtitle_msg = f"Gold Retrieved at {position}"
-    
+    if died:
+        title_msg = "GAME OVER!"
+        subtitle_msg = f"Agent Died at {position}"
+        game_over_msg = "MISSION FAILED"
+        info_msg = "Agent fell into a pit \n OR \n was eaten by the Wumpus!"
+        game_over_color = (255, 100, 100)
+    else:
+        title_msg = "MISSION ACCOMPLISHED!"
+        subtitle_msg = f"Gold Retrieved at {position}"
+        game_over_msg = "GAME COMPLETED SUCCESSFULLY"
+        info_msg = "Agent successfully navigated Wumpus World!"
+        game_over_color = (100, 255, 100)
+
     title_label = title_font.render(title_msg, True, (255, 215, 0))
     subtitle_label = subtitle_font.render(subtitle_msg, True, (255, 200, 100))
-    
     # Center titles
     title_x = (popup_width - title_label.get_width()) // 2
     subtitle_x = (popup_width - subtitle_label.get_width()) // 2
-    
     popup.blit(title_label, (title_x, 40))
     popup.blit(subtitle_label, (subtitle_x, 90))
-    
-    # Game over message
-    game_over_msg = "GAME COMPLETED SUCCESSFULLY"
-    game_over_label = title_font.render(game_over_msg, True, (100, 255, 100))
+    # Game over/accomplished message
+    game_over_label = title_font.render(game_over_msg, True, game_over_color)
     game_over_x = (popup_width - game_over_label.get_width()) // 2
     popup.blit(game_over_label, (game_over_x, 130))
-
-    # Instructions
-    info_msg = "Agent successfully navigated Wumpus World!"
+    # Info
     info_label = info_font.render(info_msg, True, COLORS['text_primary'])
     info_x = (popup_width - info_label.get_width()) // 2
     popup.blit(info_label, (info_x, 180))
