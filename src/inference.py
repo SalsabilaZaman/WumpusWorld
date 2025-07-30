@@ -104,6 +104,8 @@ class KnowledgeBase:
                 print(f"[RESOLVED] Stench at {pos} → Wumpus must be at {wumpus}")
                 self.wumpus.add(wumpus)
                 self.unsafe.add(wumpus)
+                # self.agent.use_arrow()  # Use arrow if Wumpus is found
+                print(f"Agent detected Wumpus at {wumpus}! Killing it Muahahaha!")
                 if wumpus in self.risky:
                     self.risky.remove(wumpus)
             else:
@@ -155,6 +157,8 @@ class KnowledgeBase:
                         print(f"[RESOLVED] Stench at {pos} → Wumpus must be at {wumpus}")
                         self.wumpus.add(wumpus)
                         self.unsafe.add(wumpus)
+                        # self.agent.use_arrow()  # Use arrow if Wumpus is found
+                        print(f"Agent detected Wumpus at {wumpus}! Killing it Muahahaha!")
                         if wumpus in self.risky:
                             self.risky.remove(wumpus)
 

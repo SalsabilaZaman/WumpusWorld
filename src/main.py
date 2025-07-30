@@ -12,8 +12,10 @@ def main():
     clock = pygame.time.Clock()
     running = True
 
-    world = World(map_file="src/maps/level1.txt")  # Load the map from a file
-    # world = World()  # Generate a random map
+    # world = World(map_file="src/maps/level1.txt")  # Load the map from a file
+    # world = World(map_file="src/maps/level2.txt")  # Load the map from a file
+    
+    world = World()  # Generate a random map
     
     agent = Agent()
 
@@ -46,7 +48,7 @@ def main():
         play_percept_sounds(percepts)  # Play sound for new cell
         pygame.display.flip()
 
-        pygame.time.delay(100)  # Short pause to show new percepts
+        pygame.time.delay(300)  # Short pause to show new percepts
 
         if agent.found_gold:
             print(f"\nGOLD FOUND at {agent.position}! GAME OVER.")
